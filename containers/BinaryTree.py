@@ -18,6 +18,16 @@ class Node():
         self.left = left    # NOTE: left should always be a Node
         self.right = right  # NOTE: right should always be a Node
 
+    def __str__(self):
+        out = '('
+        out += str(self.value)
+        if self.left:
+            out += str(self.left)
+        if self.right:
+            out += str(self.right)
+        out += ')'
+        return
+
 
 class BinaryTree():
     '''
