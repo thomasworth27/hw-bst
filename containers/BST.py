@@ -20,6 +20,8 @@ class BST(BinaryTree):
         then each element of xs needs to be inserted into the BST.
         '''
         super().__init__()
+        if xs is not None:
+            self.insert_list(xs)
 
     def __repr__(self):
         '''
@@ -63,12 +65,12 @@ class BST(BinaryTree):
         '''
         ret = True
         if node.left:
-            if node.value >= node.left.value:
+            if node.value >= BST._find_largest(node.left):
                 ret &= BST._is_bst_satisfied(node.left)
             else:
                 ret = False
         if node.right:
-            if node.value <= node.right.value:
+            if node.value <= BST._find_smallest(node.right):
                 ret &= BST._is_bst_satisfied(node.right)
             else:
                 ret = False
@@ -84,6 +86,26 @@ class BST(BinaryTree):
         HINT:
         Create a staticmethod helper function following the pattern of _is_bst_satisfied.
         '''
+        if self.root is None:
+            self.root = Node(value)
+        else:
+            BST._insert(value, self.root)
+
+    @staticmethod
+    def _insert(value, node):
+        '''
+        static method for def _insert
+        '''
+        if value < node.value:
+            if node.left is None:
+                node.left = Node(value)
+            else:
+                BST._insert(value, node.left)
+        elif value > node.value:
+            if node.right is None:
+                node.right = Node(value)
+            else:
+                BST._insert(value, node.right)
 
     def insert_list(self, xs):
         '''
@@ -96,6 +118,8 @@ class BST(BinaryTree):
         Repeatedly call the insert method.
         You cannot get this method to work correctly until you have gotten insert to work correctly.
         '''
+        for x in xs:
+            self.insert(x)
 
     def __contains__(self, value):
         '''
@@ -110,6 +134,7 @@ class BST(BinaryTree):
         FIXME:
         Implement this function.
         '''
+        return BST._find(value, self.root)
 
     @staticmethod
     def _find(value, node):
@@ -117,6 +142,14 @@ class BST(BinaryTree):
         FIXME:
         Implement this function.
         '''
+        if node is None:
+            return False
+        if value < node.value:
+            return BST._find(value, node.left)
+        elif value > node.value:
+            return BST._find(value, node.right)
+        else:
+            return True
 
     def find_smallest(self):
         '''
@@ -148,6 +181,21 @@ class BST(BinaryTree):
         HINT:
         Follow the pattern of the _find_smallest function.
         '''
+        if self.root is None:
+            raise ValueError('Nothing in tree')
+        else:
+            return BST._find_largest(self.root)
+
+    @staticmethod
+    def _find_largest(node):
+        '''
+        This is a helper function for find_smallest and not intened to be called directly by the user.
+        '''
+        assert node is not None
+        if node.right is None:
+            return node.value
+        else:
+            return BST._find_largest(node.right)
 
     def remove(self, value):
         '''
@@ -163,6 +211,24 @@ class BST(BinaryTree):
         HINT:
         Use a recursive helper function.
         '''
+        self.root = BST._remove(value, self.root)
+
+    @staticmethod
+    def _remove(value, node):
+        if node is None:
+            return None
+        if value < node.value:
+            node.left = BST._remove(value, node.left)
+        elif value > node.value:
+            node.right = BST._remove(value, node.right)
+        else:
+            if node.left is None:
+                return node.right
+            if node.right is None:
+                return node.left
+            node.value = BST._find_smallest(node.right)
+            node.right = BST._remove(node.value, node.right)
+        return node
 
     def remove_list(self, xs):
         '''
@@ -174,3 +240,5 @@ class BST(BinaryTree):
         HINT:
         See the insert_list function.
         '''
+        for x in xs:
+            self.remove(x)
