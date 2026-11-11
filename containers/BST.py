@@ -56,7 +56,6 @@ class BST(BinaryTree):
         '''
         return sorted(self.to_list('inorder')) == sorted(t2.to_list('inorder'))
 
-
     def is_bst_satisfied(self):
         '''
         Whenever you implement a data structure,
